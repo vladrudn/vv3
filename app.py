@@ -41,6 +41,15 @@ def upload_file():
         return 'Помилка при завантаженні файлу'
 
 
+@app.route('/vacations')
+def show_vacations():
+    conn = sqlite3.connect('excel_data.db')
+    df = pd.read_sql_query("SELECT * FROM vacations", conn)
+    conn.close()
+    return render_template('vacations.html', data=df.to_dict(orient='records'))
+
+#NOTE
+
 if __name__ == '__main__':
     create_db()
     app.run(debug=True)
