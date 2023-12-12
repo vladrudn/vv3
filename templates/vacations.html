@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Відпустки</title>+<script>
+        function saveScrollPosition() {
+            localStorage.setItem("scrollPosition", window.scrollY);
+        }
+
+        window.onload = function() {
+            if (localStorage.getItem("scrollPosition")) {
+                window.scrollTo(0, localStorage.getItem("scrollPosition"));
+                localStorage.removeItem("scrollPosition"); // Очищаємо позицію скролу після завантаження
+            }
+        };
+    </script>
+</head>
+<body>
+<form action="/return" method="post">
+    <table border="1">
+        <tr>
+            <th></th> <!-- Додаткова колонка для чекбоксів -->
+            <th>Номер ВК</th>
+            <th>Підрозділ</th>
+            <th>ПІБ</th>
+            <th>Адреса</th>
+            <th>Початок</th>
+            <th>Закінчення</th>
+            <th>Повернення</th>
+            <th>діб</th>
+            <th>дрг</th>
+            <th>вид</th>
+            <th>Примітка</th>
+        </tr>
+        {% for row in data %}
+        <tr id="row_{{ row['num_vk'] }}">
+            <td><input type="checkbox" name="selected_rows" value="{{ row['num_vk'] }}-{{ row['ipn'] or row['pib'] }}"></td>
+            <td>{{ row['num_vk'] }}</td>
+            <td>{{ row['pidrozd'] }}</td>
+            <td>{{ row['pib'] }}</td>
+            <td>{{ row['adres'] }}</td>
+            <td>{{ row['start'] }}</td>
+            <td>{{ row['end'] }}</td>
+            <td>{{ row['return'] }}</td>
+            <td>{{ row['days'] }}</td>
+            <td>{{ row['road'] }}</td>
+            <td>{{ row['type'] }}</td>
+            <td><input type="text" form="notes_form" name="note_{{ row['num_vk'] }}" value="{{ row['note'] }}"></td>
+        </tr>
+        {% endfor %}
+    </table>
+    <input type="submit" value="Повернення">
+</form>
+<form id="notes_form" action="/update_notes" method="post">
+    <input type="submit" value="Оновити примітки" onclick="saveScrollPosition()">
+</form>
+</body>
+</html>

@@ -48,7 +48,48 @@ def show_vacations():
     conn.close()
     return render_template('vacations.html', data=df.to_dict(orient='records'))
 
-#NOTE
+@app.route('/update_notes', methods=['POST'])
+def update_notes():
+    conn = sqlite3.connect('excel_data.db')
+    cursor = conn.cursor()
+
+    for key, note in request.form.items():
+        if key.startswith('note_'):
+            num_vk = key.split('_')[1]
+            cursor.execute("UPDATE vacations SET note = ? WHERE num_vk = ?", (note, num_vk))
+
+    conn.commit()
+    conn.close()
+    return redirect(url_for('show_vacations'))  # Перенаправлення на сторінку vacations.html
+
+
+
+@app.route('/return', methods=['POST'])
+def process_return():
+    selected_rows = request.form.getlist('selected_rows')
+    conn = sqlite3.connect('excel_data.db')
+
+    conditions = []
+    params = []
+    for row in selected_rows:
+        num_vk, identifier = row.split('-')
+        conditions.append("(v.num_vk = ? AND (v.ipn = ? OR v.pib = ? OR e.\"ПІБ\" = ?))")
+        params.extend([num_vk, identifier, identifier, identifier])
+
+    query = f"""
+        SELECT e.\"ПІБ\", v.num_vk, v.date_vk, v.start, v.end, v.days, v.type, v.note
+        FROM excel_data e
+        JOIN vacations v ON e.\"ІПН\" = v.ipn OR e.\"ПІБ\" = v.pib
+        WHERE {' OR '.join(conditions)}
+    """
+    cursor = conn.execute(query, params)
+    data = cursor.fetchall()
+    conn.close()
+    return render_template('return.html', data=data)
+
+
+
+
 
 if __name__ == '__main__':
     create_db()

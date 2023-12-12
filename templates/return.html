@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Результати повернення</title>
+</head>
+<body>
+    <form action="/save_return_data" method="post">
+        <table border="1">
+            <tr>
+                <th>ПІБ</th>
+                <th>Номер ВК</th>
+                <th>Дата ВК</th>
+                <th>Початок</th>
+                <th>Закінчення</th>
+                <th>Повернення</th>
+                <th>діб</th>
+                <th>тип</th>
+                <th>Примітки</th>
+            </tr>
+            {% for row in data %}
+            <tr>
+                <td>{{ row[0] }}</td> <!-- ПІБ -->
+                <td>{{ row[1] }}</td> <!-- Номер ВК -->
+                <td>{{ row[2] }}</td> <!-- Дата ВК -->
+                <td>{{ row[3] }}</td> <!-- Початок -->
+                <td>{{ row[4] }}</td> <!-- Закінчення -->
+                <td><input type="text" name="return_date" value="{{ row[4] }}"></td> <!-- Повернення -->
+                <td>{{ row[5] }}</td> <!-- діб -->
+                <td>{{ row[6] }}</td> <!-- тип -->
+                <td><input type="text" name="note_{{ row[1] }}" value="{{ row[7] }}"></td> <!-- Примітки -->
+            </tr>
+            {% endfor %}
+        </table>
+        <input type="submit" value="Зберегти">
+    </form>
+</body>
+</html>
